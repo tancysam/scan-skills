@@ -1,8 +1,12 @@
 # scan-skills
 
 Two agent skills that map a repository into a private, interactive HTML page.
-Everything runs on your machine. Nothing is uploaded.
+One is for architecture, the other is for AI/ML pipelines.
 
+>[!important]
+> This skill was inspired by and heavily built on based on Foglamp's codebase mapping implementation. 
+> However, I wanted a local and fully offline skill to implement, which was why I created these sets of skills.
+<br>
 | Skill | Answers | Invoke |
 | --- | --- | --- |
 | [`scan-codebase`](skills/scan-codebase/SKILL.md) | What is this system and what does it talk to? Entry points, agents, models, tools, workflows, services, stores, third-party APIs. | `/scan-codebase` |
