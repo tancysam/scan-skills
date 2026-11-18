@@ -19,14 +19,6 @@ Available as a Claude Code plugin or as plain skills for Claude Code and Codex.
 Requires **Python 3.9+**. The bundled Python scripts use only the standard library;
 there are no Python packages to install.
 
-This repository is private. Before installing from GitHub, make sure your
-account has access and authenticate on the machine you will use:
-
-```bash
-gh auth login
-gh auth setup-git
-```
-
 Inside Claude Code, install the plugin:
 
 ```text
@@ -140,7 +132,7 @@ claude plugin install scan-skills@scan-skills
 
 ### Install from a local clone
 
-If you do not already have a clone, obtain one first (requires GitHub access):
+Clone the repository if you don't have it yet:
 
 ```bash
 git clone https://github.com/tancysam/scan-skills ~/scan-skills
