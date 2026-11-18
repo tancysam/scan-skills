@@ -1,6 +1,6 @@
 {
   "name": "scan-skills",
-  "description": "Offline repository maps: /scan-codebase charts architecture and AI usage, /scan-pipeline charts AI/ML pipelines at system or function level. Renders a private, self-contained HTML page; never uploads anything.",
+  "description": "Map repository architecture, AI usage, and AI/ML pipelines with /scan-codebase and /scan-pipeline. Render private, self-contained HTML maps that work offline.",
   "version": "1.0.0",
   "author": {
     "name": "tancysam",

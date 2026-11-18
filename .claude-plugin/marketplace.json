@@ -5,12 +5,12 @@
     "name": "tancysam",
     "url": "https://github.com/tancysam"
   },
-  "description": "Offline codebase and AI/ML pipeline maps for Claude Code.",
+  "description": "Private, offline architecture and AI/ML pipeline maps for Claude Code.",
   "plugins": [
     {
       "name": "scan-skills",
       "source": "./",
-      "description": "Offline repository maps: /scan-codebase (architecture and AI usage) and /scan-pipeline (AI/ML pipelines at system or function level).",
+      "description": "Use /scan-codebase for architecture and AI usage, or /scan-pipeline for AI/ML flows. Both produce self-contained, offline HTML maps.",
       "version": "1.0.0",
       "license": "Apache-2.0",
       "category": "development",
