@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "format": "pipeline-scan",
+  "project": {
+    "name": "Docs QA",
+    "slug": "docs-qa",
+    "tagline": "Small RAG app: ingest markdown docs, answer questions with citations",
+    "date": "2026-11-18"
+  },
+  "mode": "function",
+  "scope": { "files": 14, "loc": 1180, "pipelineFiles": 6 },
+  "stats": { "pipelines": 2, "stages": 11, "models": 2, "datasets": 1 },
+  "frameworks": [
+    { "id": "openai", "label": "OpenAI SDK", "role": "embeddings + chat", "domain": "openai.com" },
+    { "id": "chroma", "label": "Chroma", "role": "vector store", "domain": "trychroma.com" }
+  ],
+  "pipelines": [
+    { "id": "ingest", "name": "Ingest docs", "type": "etl", "trigger": "python ingest.py ./docs", "sourceRef": "ingest.py:58" },
+    { "id": "answer", "name": "Answer question", "type": "rag", "trigger": "POST /ask", "sourceRef": "app.py:21" }
+  ],
+  "graph": {
+    "nodes": [
+      { "id": "ingest-main", "label": "main()", "kind": "trigger", "sub": "main(docs_dir: str)", "pipeline": "ingest",
+        "sourceRef": "ingest.py:58" },
+      { "id": "docs", "label": "docs/*.md", "kind": "data", "sub": "markdown files", "pipeline": "ingest" },
+      { "id": "load-docs", "label": "load_docs()", "kind": "function", "sub": "load_docs(path) -> list[Doc]", "pipeline": "ingest",
+        "sourceRef": "ingest.py:12" },
+      { "id": "chunk", "label": "chunk_text()", "kind": "transform", "sub": "chunk_text(doc, size=800, overlap=100)", "pipeline": "ingest",
+        "sourceRef": "chunking.py:8", "config": { "size": "800 tokens", "overlap": "100" },
+        "steps": [ { "name": "split_headings()", "sourceRef": "chunking.py:31", "note": "keeps H2 sections together" } ] },
+      { "id": "embed-chunks", "label": "embed_chunks()", "kind": "transform", "sub": "embed_chunks(chunks) -> vectors", "pipeline": "ingest",
+        "sourceRef": "embeddings.py:15", "framework": "OpenAI SDK", "capabilities": ["embeddings", "batching"] },
+      { "id": "upsert", "label": "upsert_vectors()", "kind": "function", "sub": "upsert_vectors(ids, vecs, meta)", "pipeline": "ingest",
+        "sourceRef": "store.py:20", "framework": "Chroma" },
+      { "id": "ask-route", "label": "ask()", "kind": "trigger", "sub": "POST /ask {question}", "pipeline": "answer",
+        "sourceRef": "app.py:21" },
+      { "id": "embed-query", "label": "embed_query()", "kind": "transform", "sub": "embed_query(q) -> vector", "pipeline": "answer",
+        "sourceRef": "embeddings.py:34" },
+      { "id": "search", "label": "search()", "kind": "retrieve", "sub": "search(vec, k=6) -> list[Chunk]", "pipeline": "answer",
+        "sourceRef": "store.py:41", "framework": "Chroma", "config": { "k": "6", "metric": "cosine" } },
+      { "id": "prompt", "label": "build_prompt()", "kind": "function", "sub": "build_prompt(q, chunks) -> messages", "pipeline": "answer",
+        "sourceRef": "prompts.py:9" },
+      { "id": "call-llm", "label": "call_llm()", "kind": "agent", "sub": "call_llm(messages) -> str", "pipeline": "answer",
+        "sourceRef": "llm.py:17", "framework": "OpenAI SDK", "config": { "temperature": "0.1", "max_tokens": "600" },
+        "capabilities": ["streaming", "citations"] },
+      { "id": "format", "label": "format_answer()", "kind": "function", "sub": "format_answer(text, chunks) -> Answer", "pipeline": "answer",
+        "sourceRef": "app.py:44" },
+      { "id": "response", "label": "JSON answer", "kind": "output", "sub": "{answer, citations[]}", "pipeline": "answer" },
+      { "id": "chroma", "label": "Chroma collection", "kind": "store", "sub": "docs (persisted ./db)", "domain": "trychroma.com" },
+      { "id": "embed-model", "label": "text-embedding-3-small", "kind": "model", "domain": "openai.com" },
+      { "id": "chat-model", "label": "gpt-5-mini", "kind": "model", "domain": "openai.com" }
+    ],
+    "edges": [
+      { "from": "ingest-main", "to": "load-docs", "kind": "calls" },
+      { "from": "docs", "to": "load-docs", "kind": "reads" },
+      { "from": "load-docs", "to": "chunk", "kind": "feeds", "label": "list[Doc]" },
+      { "from": "chunk", "to": "embed-chunks", "kind": "feeds", "label": "list[Chunk]" },
+      { "from": "embed-chunks", "to": "embed-model", "kind": "calls", "label": "batches of 96" },
+      { "from": "embed-chunks", "to": "upsert", "kind": "feeds", "label": "vectors[1536]" },
+      { "from": "upsert", "to": "chroma", "kind": "writes" },
+      { "from": "ask-route", "to": "embed-query", "kind": "calls" },
+      { "from": "embed-query", "to": "embed-model", "kind": "calls" },
+      { "from": "embed-query", "to": "search", "kind": "feeds", "label": "query vector" },
+      { "from": "search", "to": "chroma", "kind": "reads" },
+      { "from": "search", "to": "prompt", "kind": "feeds", "label": "top-6 chunks" },
+      { "from": "prompt", "to": "call-llm", "kind": "feeds", "label": "messages" },
+      { "from": "call-llm", "to": "chat-model", "kind": "calls" },
+      { "from": "call-llm", "to": "format", "kind": "feeds", "label": "draft text" },
+      { "from": "format", "to": "response", "kind": "produces" }
+    ]
+  }
+}

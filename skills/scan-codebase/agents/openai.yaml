@@ -1,0 +1,6 @@
+interface:
+  display_name: "Scan Codebase"
+  short_description: "Map a repository's architecture and AI usage fully offline"
+  default_prompt: "Use $scan-codebase to inspect this repository and create a local interactive codebase map."
+policy:
+  allow_implicit_invocation: false

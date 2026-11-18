@@ -1,0 +1,6 @@
+interface:
+  display_name: "Scan Pipeline"
+  short_description: "Map a repository's AI/ML pipelines fully offline, at system or function level"
+  default_prompt: "Use $scan-pipeline to map this repository's AI and ML pipelines into a local interactive map."
+policy:
+  allow_implicit_invocation: false

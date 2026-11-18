@@ -1,0 +1,12 @@
+scan-skills
+Copyright 2026 the scan-skills authors
+
+This project contains work derived from foglamp "Scan"
+(https://github.com/foglamp-labs/foglamp), licensed under the Apache License,
+Version 2.0. The layout ideas, audit lints and map interactions were re-written
+by hand and changed: all network, upload and publishing paths were removed,
+the renderer is fully offline, and the scan-pipeline skill is new work.
+
+Bundled third-party software:
+  - elkjs 0.11.1 (skills/*/assets/elkjs-0.11.1.tgz), Eclipse Public License 2.0.
+    The license text ships inside the archive at package/LICENSE.md.
