@@ -1,0 +1,14 @@
+{
+  "name": "scan-skills",
+  "description": "Offline repository maps: /scan-codebase charts architecture and AI usage, /scan-pipeline charts AI/ML pipelines at system or function level. Renders a private, self-contained HTML page; never uploads anything.",
+  "version": "1.0.0",
+  "author": {
+    "name": "tancysam",
+    "url": "https://github.com/tancysam"
+  },
+  "homepage": "https://github.com/tancysam/scan-skills",
+  "repository": "https://github.com/tancysam/scan-skills",
+  "license": "Apache-2.0",
+  "keywords": ["architecture", "codebase-map", "ml-pipeline", "rag", "visualization", "offline", "privacy"],
+  "skills": "./skills/"
+}
